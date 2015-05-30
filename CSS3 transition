@@ -2,23 +2,62 @@
 <html>
 <head>
 <style> 
+#grow {
+    width: 100px;
+    height: 100px;
+    background: red;
+    -webkit-transition: width 2s, height 4s; /* For Safari 3.1 to 6.0 */
+    transition: width 2s, height 4s;
+}
+
+#grow:hover {
+    width: 300px;
+    height: 300px;
+}
+
 div {
     width: 100px;
     height: 100px;
     background: red;
-    -webkit-transition: width 2s; /* For Safari 3.1 to 6.0 */
+    -webkit-transition: width 2s; /* Safari */
     transition: width 2s;
 }
+
+/* For Safari 3.1 to 6.0 */
+#div1 {-webkit-transition-timing-function: linear;}
+#div2 {-webkit-transition-timing-function: ease;}
+#div3 {-webkit-transition-timing-function: ease-in;}
+#div4 {-webkit-transition-timing-function: ease-out;}
+#div5 {-webkit-transition-timing-function: ease-in-out;}
+
+/* Standard syntax */
+#div1 {transition-timing-function: linear;}
+#div2 {transition-timing-function: ease;}
+#div3 {transition-timing-function: ease-in;}
+#div4 {transition-timing-function: ease-out;}
+#div5 {transition-timing-function: ease-in-out;}
 
 div:hover {
     width: 300px;
 }
 </style>
+
+<link rel="icon" type="image/vnd.microsoft.icon"
+     href="images/favicon.ico" />
 </head>
 <body>
 
-<div></div>
+<p><b>Note:</b> This example is for CIT - 226.</p>
 
-<p>Hover over the object to see the transition.</p>
+<div id="grow"></div>
+
+<p>Hover over the div element above, to see the transition effect.</p>
+
+<div id="div1">linear</div><br>
+<div id="div2">ease</div><br>
+<div id="div3">ease-in</div><br>
+<div id="div4">ease-out</div><br>
+<div id="div5">ease-in-out</div><br>
 
 </body>
+</html>
