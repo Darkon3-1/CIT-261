@@ -1,0 +1,311 @@
+// Create the canvas and add using DOM
+var canvas = document.createElement("canvas");
+var ctx = canvas.getContext("2d");
+canvas.width = 512;
+canvas.height = 480;
+document.body.appendChild(canvas);
+
+// create div and buttons and add them using DOM
+var div1 = document.createElement("DIV");
+document.body.appendChild(div1);
+var btnSave = document.createElement("BUTTON");
+var btnLoad = document.createElement("BUTTON");
+var btnReset = document.createElement("BUTTON");
+
+// Apply the buttons with the text to the HMTL document using DOM
+div1.appendChild(btnSave).appendChild(document.createTextNode("Save"));
+div1.appendChild(btnLoad).appendChild(document.createTextNode("Load"));
+div1.appendChild(btnReset).appendChild(document.createTextNode("Reset"));
+
+// Set the onclick for each button to a function using DOM
+btnSave.onclick = saveGame;
+btnLoad.onclick = loadGame;
+btnReset.onclick = resetGame;
+
+
+
+
+
+function supportsLocalStorage() {
+    try {
+        return 'localStorage' in window && window['localStorage'] !== null;
+    } catch (e) {
+        return false;
+    }
+}
+
+// Background image
+var bgReady = false;
+var bgImage = new Image();
+bgImage.onload = function () {
+	bgReady = true;
+};
+bgImage.src = "background.png";
+
+
+
+// Hero images
+var heroReady = false;
+var hero2Ready = false;
+var hero3Ready = false;
+var heroImage = new Image();
+var heroImage2 = new Image();
+var heroImage3 = new Image();
+var myHero = new Image();
+
+
+
+// Status of game var
+var monstersCaught = 0;
+var heroSelected = 0;
+
+heroImage.onload = function () {
+    heroReady = true;
+    hero2Ready = true;
+    hero3Ready = true;
+};
+heroImage.src = "hero.png";
+heroImage2.src = "hero2.png";
+heroImage3.src = "hero3.png";
+
+var text = '{"Score":"Goblins caught: ", "Start" : "Select a Hero!"}';
+var jText = JSON.parse(text);
+
+// Monster image
+var monsterReady = false;
+var monsterImage = new Image();
+monsterImage.onload = function () {
+	monsterReady = true;
+};
+monsterImage.src = "monster.png";
+
+// Game objects
+var hero = {
+	speed: 256 // movement in pixels per second
+};
+
+var life = 5;
+var monster = {};
+
+
+// Handle keyboard controls
+var keysDown = {};
+
+addEventListener("keydown", function (e) {
+	keysDown[e.keyCode] = true;
+}, false);
+
+addEventListener("keyup", function (e) {
+	delete keysDown[e.keyCode];
+}, false);
+
+
+var selectHero = function() {
+    hero.x = (canvas.width / 2);
+    hero.y = (canvas.height / 2);
+    ctx.drawImage(heroImage, hero.x, hero.y);
+    ctx.drawImage(heroImage2, hero.x + 40, hero.y);
+    ctx.drawImage(heroImage3, hero.x - 40, hero.y);
+
+    // Instructions to slect hero
+    ctx.fillStyle = "rgb(250, 250, 250)";
+    ctx.font = "24px Helvetica";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText(jText.Start, 198, 280);
+
+};
+
+// Reset the game when the player catches a monster
+var reset = function () {
+    if (monstersCaught == 0) {
+        hero.x = canvas.width / 2;
+        hero.y = canvas.height / 2;
+        
+    }
+
+	// Throw the monster somewhere on the screen randomly
+	monster.x = 32 + (Math.random() * (canvas.width - 100));
+	monster.y = 32 + (Math.random() * (canvas.height - 100));
+};
+
+
+// Update game objects
+var update = function (modifier) {
+	if (38 in keysDown) { // Player holding up
+		hero.y -= hero.speed * modifier;
+	}
+	if (40 in keysDown) { // Player holding down
+		hero.y += hero.speed * modifier;
+	}
+	if (37 in keysDown) { // Player holding left
+		hero.x -= hero.speed * modifier;
+	}
+	if (39 in keysDown) { // Player holding right
+		hero.x += hero.speed * modifier;
+	}
+
+	// Are they touching?
+	if (
+		hero.x <= (monster.x + 32)
+		&& monster.x <= (hero.x + 32)
+		&& hero.y <= (monster.y + 32)
+		&& monster.y <= (hero.y + 32)
+	) {
+		++monstersCaught;
+		reset();
+	}
+};
+
+canvas.addEventListener("click", onCanvasClick, false);
+
+function onCanvasClick(e) {
+
+    // checks to see which hero has been selected
+    if (heroSelected == 0) {
+        if (getXPosition(e) >= 298 && getXPosition(e) <= 327
+        && getYPosition(e) >= 239 && getYPosition(e) <= 270) {
+            myHero = heroImage2
+            heroSelected = 2;
+        }
+
+        if (getXPosition(e) >= 260 && getXPosition(e) <= 287
+            && getYPosition(e) >= 239 && getYPosition(e) <= 270) {
+            myHero = heroImage;
+            heroSelected = 1;
+        }
+
+        if (getXPosition(e) >= 216 && getXPosition(e) <= 247
+            && getYPosition(e) >= 239 && getYPosition(e) <= 270) {
+            myHero = heroImage3;
+            heroSelected = 3;
+        }
+
+    }
+}
+
+// Gets the X position of the mouse
+function getXPosition(e) {
+    var x;
+    if (e.pageX != undefined) {
+        x = e.pageX;
+    }
+    else {
+        x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+    }
+    x -= canvas.offsetLeft;
+
+    return x;
+}
+
+// Gets the Y position of the mouse
+function getYPosition(e) {
+    var y;
+    if (e.pageX != undefined) {
+        y = e.pageY;
+    }
+    else {
+        xy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+    }
+    y -= canvas.offsetTop;
+
+    return y;
+}
+
+
+// Draws everything
+var render = function () {	if (bgReady) {
+		ctx.drawImage(bgImage, 0, 0);
+	}
+
+    
+    if (heroReady) { // Checks to see if a hero has been selected
+        if (heroSelected == 0) {
+            selectHero();
+        }
+        else { // If none, draw hero
+            ctx.drawImage(myHero, hero.x, hero.y);
+        }
+	}
+
+	if (monsterReady && heroSelected >= 1) {
+		ctx.drawImage(monsterImage, monster.x, monster.y);
+	}
+
+	// Score
+	ctx.fillStyle = "rgb(250, 250, 250)";
+	ctx.font = "24px Helvetica";
+	ctx.textAlign = "left";
+	ctx.textBaseline = "top";
+	ctx.fillText(jText.Score + monstersCaught, 32, 32);
+};
+
+// The main game loop
+var main = function () {
+	
+	
+	var now = Date.now();
+	var delta = now - then;
+
+	update(delta / 1000);
+	render();
+
+	then = now;
+
+	// Request to do this again ASAP
+	requestAnimationFrame(main);
+};
+
+function resetGame() {
+    heroSelected = 0;
+    monstersCaught = 0;
+}
+
+
+function saveGame() {
+    if (supportsLocalStorage) {
+        // Saves the data to var ready for JSON
+        var text = { "savedHero": heroSelected, "score": monstersCaught };
+
+        // changes data to something JSON can use then store
+        var obj = JSON.stringify(text);
+        obj = JSON.parse(obj);
+
+        // Store obj using local storage
+        localStorage["hero"] = obj.savedHero;
+        localStorage["savedScore"] = obj.score;
+    }
+    else { alert("Local Storage not supported"); }
+}
+
+function loadGame() {
+    heroSelected = parseInt(localStorage["hero"]);
+    switch (heroSelected) {
+        case 1:
+            myHero = heroImage;
+            break;
+        case 2:
+            myHero = heroImage2;
+            break;
+        case 3:
+            myHero = heroImage3;
+            break;
+        default:
+            break;
+    }
+    monstersCaught = parseInt(localStorage["savedScore"]);
+}
+
+
+
+function resumeGame(){
+	
+}
+// Cross-browser support for requestAnimationFrame
+var w = window;
+requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
+
+// Let's play this game!
+var then = Date.now();
+reset();
+main();
