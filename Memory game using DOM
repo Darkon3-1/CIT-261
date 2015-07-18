@@ -1,0 +1,196 @@
+// JavaScript source code
+
+// Create the header
+function startWebsite() {
+    var letStart = document.createElement("HEADER");
+    letStart.id = "h1";
+    document.body.appendChild(letStart).appendChild(document.createTextNode("Let's create some elements!!"));
+
+    // create first button to strat process
+    var btnStart = document.createElement("BUTTON");
+    btnStart.id = "btn0";
+    document.body.appendChild(btnStart).appendChild(document.createTextNode("Let's Start!!!"));
+    btnStart.onclick = StartBuilding;
+}
+
+function StartBuilding() {
+
+    var btnStart = document.getElementById("btn0");
+    document.body.removeChild(btnStart);
+    
+    var div1 = document.createElement("FORM");
+    div1.id = "div";
+    document.body.appendChild(div1);
+
+    var btnchoice1, btnchoice2, btnchoice3;
+
+    btnchoice1 = document.createElement("BUTTON");
+    btnchoice2 = document.createElement("BUTTON");
+    btnchoice3 = document.createElement("BUTTON");
+    btnchoice1.id = "btn1";
+    btnchoice2.id = "btn2";
+    btnchoice3.id = "btn3";
+
+    div1.appendChild(btnchoice2).appendChild(document.createTextNode("Game"));
+   
+    btnchoice2.onclick = MemoryGame;
+
+}
+
+function MemoryGame() {
+
+    var div = document.getElementById("div");
+    var btn = document.createElement("BUTTON");
+    div.removeChild(document.getElementById("btn2"));
+    div.appendChild(btn).appendChild(document.createTextNode("Reset"));
+    btn.onclick = StartBuilding;
+    
+   for (var i = 0; i < 12; i++) {
+        var container = document.createElement("DIV");
+        container.className = "container";
+        container.id = "container" + i;   
+        div.appendChild(container);
+
+        var flipper = document.createElement("DIV");
+        flipper.id = "card" + i;
+        flipper.className = "shadow card";
+        container.appendChild(flipper);
+        flipper.addEventListener('click', classToggle);
+
+        var frontDiv = document.createElement("DIV");
+        frontDiv.className = "front face mortalkombat bgimg";
+        flipper.appendChild(frontDiv);
+        
+
+        var backDiv = document.createElement("DIV");
+        backDiv.id = "div" + i;
+       
+        flipper.appendChild(backDiv);
+   }
+   
+   
+   startGame();
+}
+
+var card1 = null;
+var card2 = null;
+function startGame() {
+    setTimeout(addImages, 500);
+    setTimeout(FlipAll,1000);
+    setTimeout(FlipAll, 3000);
+}
+
+function classToggle(e) {
+    
+    this.classList.toggle('rotate');
+    if (card1 != null) {
+        card2 = document.getElementById(this.id);
+        card2.removeEventListener('click', classToggle);
+        card2 = card2.parentElement;
+    }
+    if (card1 == null) {
+        card1 = document.getElementById(this.id);
+        card1.removeEventListener('click', classToggle);
+        card1 = card1.parentElement;
+    }
+
+  
+    
+    if (card1.id == card2.id) { setTimeout(RemoveTile, 1500); }
+
+    else if (card1.id != card2.id) { setTimeout(FlipTile, 1500); }
+
+}
+
+function FlipAll() {
+    for (var i = 0; i < 12; i++) {
+        document.getElementById("card" + i).classList.toggle('rotate');
+    }
+}
+
+function FlipTile() {
+    card1 = card1.firstElementChild;
+    card2 = card2.firstElementChild;
+
+    card1.addEventListener('click', classToggle);
+    card2.addEventListener('click', classToggle);
+
+    card1.classList.toggle('rotate');
+    card2.classList.toggle('rotate');
+
+    card1 = card2 = null;
+}
+
+function RemoveTile() {
+    card2.innerHTML = '';
+    card1.innerHTML = '';
+    card1 = null;
+    card2 = null;
+}
+
+function addImages() {
+
+    var array = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+    
+    for (var i = 0; i < 12; i++) {
+
+        // sets images and gives the same card number to the
+        // card with the same image
+        var div = document.getElementById("div" + array[i]);
+        div.style.backgroundImage = "url(../Images/fraction.png)";
+        div.className = "back face bgimg";
+        document.getElementById("container" + array[i]).id = "container0";
+        i++;
+        
+        var div1 = document.getElementById("div" + array[i]);
+        div1.style.backgroundImage = "url(../Images/fraction2.png)";
+        div1.className = "back face bgimg";
+        document.getElementById("container" + array[i]).id = "container1";
+        i++;
+
+        var div2 = document.getElementById("div" + array[i]);
+        div2.style.backgroundImage = "url(../Images/fraction3.png)";
+        div2.className = "back face bgimg";
+        document.getElementById("container" + array[i]).id = "container2";
+        i++;
+
+        var div3 = document.getElementById("div" + array[i]);
+        div3.style.backgroundImage = "url(../Images/fraction4.png)";
+        div3.className = "back face bgimg";
+        document.getElementById("container" + array[i]).id = "container3";
+        i++;
+
+        var div4 = document.getElementById("div" + array[i]);
+        div4.style.backgroundImage = "url(../Images/fraction5.png)";
+        div4.className = "back face bgimg";
+        document.getElementById("container" + array[i]).id = "container4";
+        i++;
+
+        var div5 = document.getElementById("div" + array[i]);
+        div5.style.backgroundImage = "url(../Images/subzero.png)";
+        div5.className = "back face bgimg";
+        document.getElementById("container" + array[i]).id = "container5";
+    }
+}
+
+
+function shuffle(array) {
+    var i = array.length,
+        j = 0,
+        temp;
+
+    while (i--) {
+
+        j = Math.floor(Math.random() * (i + 1));
+
+        // swap randomly chosen element with current element
+        temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+
+    }
+
+    return array;
+}
+
+startWebsite();
