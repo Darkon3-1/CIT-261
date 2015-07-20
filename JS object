@@ -1,0 +1,68 @@
+function robot(headcolor, armcolor, legcolor, bodycolor) {
+    this.headcolor = headcolor;
+    this.armcolor = armcolor;
+    this.legcolor = legcolor;
+    this.bodycolor = bodycolor; 
+}
+
+var color = {
+    head: "#ADD8E6",
+    body: "#ADD8E6",
+    legs: "#ADD8E6",
+    arms: "#ADD8E6",
+    getColor: function (head, body, arms, legs) {
+        this.head = head;
+        this.arms = arms;
+        this.legs = legs;
+        this.body = body;
+    }
+};
+
+function drawRobot(color) {
+
+    // head
+    ctx.fillStyle = color.head;
+    ctx.fillRect(100, 0, 110, 70);
+
+    // body
+    ctx.fillStyle = color.body;
+    ctx.fillRect(125, 70, 60, 90);
+
+    // legs
+    ctx.fillStyle = color.legs;
+    ctx.fillRect(125, 160, 15, 40);
+    ctx.fillRect(170, 160, 15, 40);
+
+    //arms
+    ctx.fillStyle = color.arms;
+    ctx.fillRect(75, 85, 50, 8);
+    ctx.fillRect(185, 85, 50, 8);
+
+    // Eyes
+    ctx.beginPath();
+    ctx.arc(130, 30, 10, 0, 2 * Math.PI);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(170, 30, 10, 0, 2 * Math.PI);
+    ctx.stroke();
+
+}
+
+function setColors() {
+    color.getColor(document.colors.head.value, document.colors.body.value,
+        document.colors.arm.value, document.colors.leg.value);
+    drawRobot(color);
+  
+}
+
+var btn = document.createElement("BUTTON");
+btn.onclick = setColors;
+document.body.appendChild(btn).appendChild(document.createTextNode("Set Colors"));
+var c = document.createElement("CANVAS");
+c.width = 300;
+c.height = 300;
+document.body.appendChild(c);
+var ctx = c.getContext("2d");
+
+drawRobot(color);
